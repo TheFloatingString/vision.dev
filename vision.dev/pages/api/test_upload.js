@@ -1,9 +1,15 @@
+import fs from 'fs';
+
 export default async function handler(req, res) {
 
-    const file = await req.body.file;
-    const fileContent = fs.readFileSync(file.path, "utf-8")
+    // const file = await req.body.file;
+    // console.log(file);
 
-    console.log(fileContent);
+    console.log(req.body);
+
+    // const fileContent = fs.readFileSync(file.path, "utf-8")
+
+    // console.log(fileContent);
 
 	res.status(200).json({"data": "vision.dev Rest API home."})
 }
