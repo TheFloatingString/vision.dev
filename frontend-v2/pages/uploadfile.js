@@ -1,5 +1,8 @@
 'use client';
 
+import "./globalspages.css"
+
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -21,8 +24,23 @@ export default function Home() {
 
     const client_ipfs_hash = data.get("ipfs_hash");
 
-    const res = await fetch("http://localhost:8010/predict/"+client_ipfs_hash);
-    const imageBlob = await res.blob();
+    const resp = await fetch(
+      "http://localhost:8010/upload_and_predict", {
+        method: "POST",
+        body: data
+      }
+    );
+
+    // const resp = await axios.post("http://localhost:8010/upload_and_predict", data, {
+    //   headers: {
+    //     "content-type": "multipart/form-data",
+    //   }
+    // })
+
+
+
+    // const res = await fetch("http://localhost:8010/predict/"+client_ipfs_hash);
+    const imageBlob = await resp.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
     setImageData(imageObjectURL);
 
