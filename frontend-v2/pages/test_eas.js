@@ -11,10 +11,60 @@ import axios from 'axios';
 import Image from 'next/image';
 import { IMAGES_MANIFEST } from "next/dist/shared/lib/constants";
 
+
+import { EAS, Offchain, SchemaEncoder, SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
+import { ethers } from 'ethers';
+
+
+
+
+
+export const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
+
+
+
+async function getProvider(eas) {
+    
+    const uid = "0x5134f511e0533f997e569dac711952dde21daf14b316f3cce23835defc82c065";
+    const attestation = await eas.getAttestation(uid);
+    
+
+    console.log(attestation);
+}
+
+
 export default function Home() {
+
+
+
+    const eas = new EAS(EASContractAddress);
+
+    const provider = ethers.providers.getDefaultProvider(
+        "sepolia"
+    );
+
+    eas.connect(provider);
+
+    getProvider(eas);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         const [img, setImg] = useState(null);
         const [imageData, setImageData] = useState(null);
-        const [imageCaption, setImageCaption] = useState(null);
         const webcamRef = useRef(null);
 
         const videoConstraints = {
@@ -45,21 +95,11 @@ export default function Home() {
         setImageData(imageObjectURL);
 
 
-        const respCaption = await axios.get("http://localhost:8010/api/output_json")
-        console.log(respCaption);
-        console.log(respCaption.data);
-        console.log(respCaption.data.data.caption);
-    
-    
-        setImageCaption(respCaption.data.data.caption);
-
-
-
         }, [webcamRef]);
 
         return (
 
-            <div class="vd-full-width grid grid-cols-2">
+            <div className="vd-full-width grid grid-cols-2">
             <div className='vd-col-left flex min-h-screen flex-col items-center'>
       
             <p className='text-2xl'>vision.dev</p>
@@ -70,13 +110,13 @@ export default function Home() {
             <div className="Container">
             {img === null ? (
             <>
-                <Webcam
+                {/* <Webcam
                 audio={false}
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
                 videoConstraints={videoConstraints}
                 />
-                <br />
+                <br /> */}
                 <button className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={capture}>Capture</button>
             </>
             ) : (
@@ -101,7 +141,7 @@ export default function Home() {
               <br />
       
               <div className='vd-server-caption'>
-                <p className='text-sm'>{imageCaption}</p>
+                <p className='text-sm'>(Future step) Caption text from the server.</p>
               </div>
       
             </div>

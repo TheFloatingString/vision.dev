@@ -2,9 +2,6 @@
 
 import "./globalspages.css"
 
-
-import Webcam from 'react-webcam';
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -27,34 +24,30 @@ export default function Home() {
 
     const client_ipfs_hash = data.get("ipfs_hash");
 
-    const resp = await fetch(
-      "http://localhost:8010/upload_and_predict", {
-        method: "POST",
-        body: data
-      }
-    );
-
-    // const resp = await axios.post("http://localhost:8010/upload_and_predict", data, {
-    //   headers: {
-    //     "content-type": "multipart/form-data",
-    //   }
-    // })
-
-
-
-    // const res = await fetch("http://localhost:8010/predict/"+client_ipfs_hash);
-    const imageBlob = await resp.blob();
+    const res = await fetch("http://localhost:8010/predict/"+client_ipfs_hash);
+    const imageBlob = await res.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
     setImageData(imageObjectURL);
 
+    const resp = await axios.get("http://localhost:8010/api/output_json")
+    console.log(resp);
+    console.log(resp.data);
+    console.log(resp.data.data.caption);
 
-    const respCaption = await axios.get("http://localhost:8010/api/output_json")
-    console.log(respCaption);
-    console.log(respCaption.data);
-    console.log(respCaption.data.data.caption);
 
+    setImageCaption(resp.data.data.caption);
 
-    setImageCaption(respCaption.data.data.caption);
+    // useEffect(() => {
+    //   fetch("http://localhost:8010/api/output_json").then(
+    //     (resp) => console.log(resp.json())
+    //   )
+    // })
+
+    // const resp = await fetch("http://localhost:8010/api/output_json").then((resp) => {
+    //   console.log(resp.json())
+    // });
+    // console.log(resp);
+
 
     console.log("Clicked submit");
   }
@@ -72,6 +65,20 @@ export default function Home() {
 
       <form className='flex flex-col items-center' onSubmit={handleForm}>
 
+        <label for="username" class="block text-sm font-medium leading-6 text-gray-900">IPFS Hash</label>
+            <div class="mt-2">
+              <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                <input type="text" name="ipfs_hash" id="ipfs_hash" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="IPFS Hash" />
+              </div>
+            </div>
+
+
+            <br />
+
+            <p className="text-md"> - or -</p>
+
+            <br />
+
             <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
               <div class="text-center">
                 <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -79,7 +86,7 @@ export default function Home() {
                 </svg>
                 <div class="mt-4 flex text-sm leading-6 text-gray-600">
                   <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                    <span>Upload a file</span>
+                    <span>(Future step) Upload a file</span>
                     <input id="file-upload" name="file-upload" type="file" class="sr-only" />
                   </label>
                   <p class="pl-1">or drag and drop</p>

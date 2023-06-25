@@ -21,6 +21,24 @@
 
 }
 
+
+.vd-heading-home {
+    padding: 35px;
+}
+
+.vp-home-col-card {
+    border-radius: 1rem;
+    /* background-color: rgb(250,250,250); */
+    border-color: rgb(220, 220, 220);
+    border-width: 0.6px;
+    min-height: 300px;
+    min-width: 250px;
+    text-align: center;
+    padding: 25px;
+    padding-top: 35px;
+    border-style: dashed;
+}
+
 .vd-result-img {
   padding-left: -100px;
   width: 300px;

@@ -9,6 +9,7 @@ export default function Home() {
 
 
   const [imageData, setImageData] = useState(null);
+  const [imageCaption, setImageCaption] = useState(null);
 
   async function handleForm(e) {
     e.preventDefault();
@@ -25,6 +26,25 @@ export default function Home() {
     const imageBlob = await res.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
     setImageData(imageObjectURL);
+
+    const resp = await axios.get("http://localhost:8010/api/output_json")
+    console.log(resp);
+    console.log(resp.data);
+    console.log(resp.data.data.caption);
+
+
+    setImageCaption(resp.data.data.caption);
+
+    // useEffect(() => {
+    //   fetch("http://localhost:8010/api/output_json").then(
+    //     (resp) => console.log(resp.json())
+    //   )
+    // })
+
+    // const resp = await fetch("http://localhost:8010/api/output_json").then((resp) => {
+    //   console.log(resp.json())
+    // });
+    // console.log(resp);
 
 
     console.log("Clicked submit");
@@ -89,7 +109,7 @@ export default function Home() {
         <br />
 
         <div className='vd-server-caption'>
-          <p className='text-sm'>(Future step) Caption text from the server.</p>
+          <p className='text-sm'>{imageCaption}</p>
         </div>
 
       </div>

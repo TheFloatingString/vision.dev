@@ -19,6 +19,11 @@ from PIL import Image
 import ipfsApi
 
 
+from transformers import pipeline
+
+import json
+
+
 app = Flask(__name__)
 
 CORS(app)
@@ -31,10 +36,35 @@ ipfs_client = ipfsApi.Client("127.0.0.1", 5001)
 # ipfs_client = ipfshttpclient.connect()
 
 
+def generate_image_captions():
+    image_to_text = pipeline("image-to-text", model="nlpconnect/vit-gpt2-image-captioning")
+
+    result_text = image_to_text("input.png")
+
+    print(result_text)
+
+    output_dict = {
+        "data": {
+            "caption": result_text[0]["generated_text"]   
+        }
+    }
+
+    with open("static/output.json", "w") as jsonfile:
+        json.dump(output_dict, jsonfile)
+
+    return result_text
+
+
 def predict(img_cid):
     print(f"predicting on image: {img_cid}")
     ipfs_api.download(img_cid, 'input.png')
     results = model("input.png")  # predict on an image
+
+    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>results::")
+    # print(results)
+
+
+    generate_image_captions()
 
     # Get the image as a numpy array in BGR format
     img_bgr = results[0].plot()
@@ -45,6 +75,14 @@ def predict(img_cid):
     # Convert the numpy array to a PIL image
     img_pil = Image.fromarray(img_rgb)
     img_pil.save("output.png")
+
+
+@app.route("/api/output_json", methods=["GET"])
+def get_api_output_json():
+
+    with open("static/output.json") as jsonfile:
+        data = json.load(jsonfile)
+        return data
 
 
 @app.route("/upload_and_predict", methods=["GET", "POST"])
@@ -80,6 +118,11 @@ def post_upload_and_predict():
     print("Input image saved locally.")
 
     results = model("input.png")
+
+    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>results::")
+    # print(results)
+
+    generate_image_captions()
 
     # Get the image as a numpy array in BGR format
     img_bgr = results[0].plot()
