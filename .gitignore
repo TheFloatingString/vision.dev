@@ -3,6 +3,9 @@ ipfs_datasets/
 datasets/
 runs/
 
+# Python venv folder
+**/venv
+
 # Logs
 logs
 *.log
