@@ -34,22 +34,24 @@ export default async function handler(req, res) {
 
 
 
-    // const helia = await createHelia();
-    // const s = strings(helia);
+    const helia = await createHelia();
+    const s = strings(helia);
 
-    // const myImmutableAddress = await s.add("hello world");
+    const myImmutableAddress = await s.add("hello world");
 
-    // console.log(myImmutableAddress);
+    // const myImmutableAddress = "QmSau37UqGpi5kwTrBHvxVzvwdxGSGPdgvfiatzmx7wBCZ";
 
-    // console.log(await s.get(myImmutableAddress));
+    console.log(myImmutableAddress);
+
+    console.log(await s.get(myImmutableAddress));
 
     // console.log(req.body);
 
     // console.log(await req.body);
 
-    const file = await req.body.file;
+    // const file = await req.body.file;
 
-    const fileContent = fs.readFileSync(file.path, "utf-8")
+    // const fileContent = fs.readFileSync(file.path, "utf-8")
 
     // console.log(fileContent);
 
