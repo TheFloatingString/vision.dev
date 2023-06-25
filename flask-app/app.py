@@ -11,12 +11,24 @@ from PIL import Image
 
 from flask_cors import CORS
 
+import base64
+import io
+from PIL import Image
+
+# import ipfshttpclient
+import ipfsApi
+
 
 app = Flask(__name__)
 
 CORS(app)
 
 model = YOLO("yolov8l.pt")  # load a pretrained model (recommended for training)
+
+
+ipfs_client = ipfsApi.Client("127.0.0.1", 5001)
+
+# ipfs_client = ipfshttpclient.connect()
 
 
 def predict(img_cid):
@@ -39,9 +51,33 @@ def predict(img_cid):
 def post_upload_and_predict():
 
     print(request.form)
-    print(request.files.get("file-upload"))
 
-    request.files.get("file-upload").save("input.png")
+    # print(request.files)
+
+    # print(request.data)
+
+    if request.files.get("file-upload") is not None:
+        request.files.get("file-upload").save("pre-input.png")
+
+    else:
+        # print(request.form)
+        # print(request.form.get("file-upload"))
+
+        string_rep = request.form.get("file-upload").replace("data:image/jpeg;base64,", "")
+
+        img = Image.open(io.BytesIO(base64.decodebytes(bytes(string_rep, "utf-8"))))
+        img.save("pre-input.png")
+
+
+    # save to IPFS
+    res = ipfs_client.add("pre-input.png")
+    print(res)
+
+    ipfs_api.download(res["Hash"], 'input.png')
+
+
+
+    print("Input image saved locally.")
 
     results = model("input.png")
 

@@ -3,6 +3,8 @@
 import "./globalspages.css"
 
 
+import Webcam from 'react-webcam';
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
