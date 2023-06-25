@@ -17,7 +17,11 @@ export default function Home() {
                 <p className="text-2xl">vision.dev</p>
                 <br/>
                 <p className="text-sm">AI-enabed image annotation for InterPlanetary File Storage (IPFS).</p>
+                <br /> <br /> <br />
+
+                <center><img src="https://raw.githubusercontent.com/TheFloatingString/vision.dev/main/static/icons8-planet-48.png" /></center>
                 <br />
+
             </div>
 
             <div className="vp-full-width grid grid-cols-3">
@@ -29,7 +33,7 @@ export default function Home() {
                             <img src="https://raw.githubusercontent.com/TheFloatingString/vision.dev/main/static/icons8-search-50.png" />
                         </center>
                         <br />
-                        <a href="#" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Query</a>
+                        <a href="/query" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Query</a>
                     </div>
                 </div>
                 <div className="flex flex-col items-center">

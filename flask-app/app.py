@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_file
-from flask import request
+from flask import request, redirect
 
 import os
 from ultralytics import YOLO
@@ -22,6 +22,18 @@ import ipfsApi
 from transformers import pipeline
 
 import json
+
+from pymongo import MongoClient
+
+
+
+
+pymongo_client = MongoClient("mongodb+srv://laurencel2001:PASSWORD@cluster0.bwvqaqk.mongodb.net/?retryWrites=true&w=majority")
+
+db = pymongo_client.dev_vision_database
+coll = db.collection
+
+current_user = None
 
 
 app = Flask(__name__)
@@ -60,6 +72,18 @@ def predict(img_cid):
     ipfs_api.download(img_cid, 'input.png')
     results = model("input.png")  # predict on an image
 
+    # with open("static/author.json") as jsonfile:
+    #     data = json.load(jsonfile)
+
+    #     post = {
+    #         "author": data["author"],
+    #         "hash": res["Hash"]
+    #     }
+
+    #     coll.insert_one(post)
+
+    # coll.insert_one(post)
+
     # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>results::")
     # print(results)
 
@@ -77,12 +101,49 @@ def predict(img_cid):
     img_pil.save("output.png")
 
 
+
+
+@app.route("/api/login_form", methods=["GET", "POST"])
+def post_api_login_form():
+
+    print(request.form.get("username"))
+
+    current_user = request.form.get("username")
+
+    print(current_user)
+
+    with open("static/author.json", 'w') as jsonfile:
+        data = json.dump({"author": current_user}, jsonfile)
+
+    return redirect("http://localhost:3000")
+
 @app.route("/api/output_json", methods=["GET"])
 def get_api_output_json():
 
     with open("static/output.json") as jsonfile:
         data = json.load(jsonfile)
         return data
+
+
+@app.route("/api/author_json", methods=["GET"])
+def get_api_author_json():
+
+    with open("static/author.json") as jsonfile:
+        data = json.load(jsonfile)
+        return data
+
+@app.route("/api/entries/<username>", methods=["GET"])
+def get_api_entries(username):
+
+
+    print("retrieving entries...")
+
+    return_dict = {"data":[]}
+
+    for x in coll.find({"author": username}):
+        return_dict["data"].append(x["hash"])
+
+    return return_dict
 
 
 @app.route("/upload_and_predict", methods=["GET", "POST"])
@@ -113,6 +174,18 @@ def post_upload_and_predict():
 
     ipfs_api.download(res["Hash"], 'input.png')
 
+
+    print(current_user)
+
+    with open("static/author.json") as jsonfile:
+        data = json.load(jsonfile)
+
+        post = {
+            "author": data["author"],
+            "hash": res["Hash"]
+        }
+
+        coll.insert_one(post)
 
 
     print("Input image saved locally.")
